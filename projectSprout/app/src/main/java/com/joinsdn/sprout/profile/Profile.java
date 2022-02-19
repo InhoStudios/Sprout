@@ -2,12 +2,6 @@ package com.joinsdn.sprout.profile;
 
 public class Profile{
 
-    public static void Main(String[] args){
-
-
-
-    }
-
     final double[] ExpectedSpread = {0, 0, 0, 0, 0, 1, 1.5, 2, 2, 1.5, 2, 1, 2, 2, 1.5, 2, 1.5, 2.5, 2, 2, 1.5, 1.5, 1.5, 1.5, 1.5};
     //index i is the default/expected spread on question i + 1, first 5 are zero as those are the veto questions
     final double[] QuestionWeight = {0, 0, 0, 0, 0, 1, 0.5, 0.5, 0.5, 0.5, 1.5, 1.5, 1, 1, 2, 0.5, 1.5, 1, 1.5, 1.5, 1.5, 1.5, 1.5, 2, 2};
