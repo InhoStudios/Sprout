@@ -1,6 +1,8 @@
 package com.joinsdn.sprout.profile;
 
-public class Profile{
+import java.io.Serializable;
+
+public class Profile implements Serializable {
 
     final double[] ExpectedSpread = {0, 0, 0, 0, 0, 1, 1.5, 2, 2, 1.5, 2, 1, 2, 2, 1.5, 2, 1.5, 2.5, 2, 2, 1.5, 1.5, 1.5, 1.5, 1.5};
     //index i is the default/expected spread on question i + 1, first 5 are zero as those are the veto questions

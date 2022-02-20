@@ -34,6 +34,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // create user
+        String firstName = "andy";
+        String lastName = "zhao";
+        String pfp = "pfp";
+        String bio = "fat";
+        user = new User(firstName, lastName, pfp, bio, this);
+
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());

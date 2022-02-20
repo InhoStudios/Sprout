@@ -134,8 +134,10 @@ public class ProximityService extends Service {
                         connectionsClient.sendPayload(s, payload);
                     } catch (IOException e) {
                         e.printStackTrace();
+                    } finally {
+                        Toast.makeText(getBaseContext(), "Connection established", Toast.LENGTH_SHORT).show();
+                        connectionsClient.acceptConnection(s, payloadCallback);
                     }
-                    connectionsClient.acceptConnection(s, payloadCallback);
                 }
 
                 @Override
@@ -146,17 +148,18 @@ public class ProximityService extends Service {
 //                        connectionsClient.stopDiscovery();
 //                        connectionsClient.stopAdvertising();
 
-                        if (MainActivity.user.getProfile().IsMatch(match.getProfile())) {
-                            MainActivity.user.addMatch(match);
-                            Notification connectNotif = new Notification.Builder(getBaseContext(), SERVICE_CHAN_ID)
-                                    .setContentTitle("Match found!")
-                                    .setContentText("Click here to see more")
-                                    .setSmallIcon(R.drawable.ic_notifications_black_24dp)
-                                    .build();
+                        //if (MainActivity.user.getProfile().IsMatch(match.getProfile())) {
+                        MainActivity.user.addMatch(match);
+                        String name = match.getFirstname();
+                        Notification connectNotif = new Notification.Builder(getBaseContext(), SERVICE_CHAN_ID)
+                                .setContentTitle("Match found!")
+                                .setContentText("You matched with " + name)
+                                .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                                .build();
 
-                            notificationManager.notify(MATCH_NOTIF_ID, connectNotif);
-                            Toast.makeText(getBaseContext(), "Match found!", Toast.LENGTH_SHORT).show();
-                        }
+                        notificationManager.notify(MATCH_NOTIF_ID, connectNotif);
+                        Toast.makeText(getBaseContext(), "Match found!", Toast.LENGTH_SHORT).show();
+                        //}
 
                         matchEndpointID = s;
                     }
@@ -173,7 +176,7 @@ public class ProximityService extends Service {
                 @Override
                 public void onEndpointFound(@NonNull String s, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
                     connectionsClient.requestConnection(codeName, s, connectionLifecycleCallback);
-                    // Toast.makeText(getBaseContext(), "Endpoint found", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(), "Endpoint found", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
