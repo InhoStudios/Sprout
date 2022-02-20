@@ -148,14 +148,14 @@ public class ProximityService extends Service {
                 public void onConnectionInitiated(@NonNull String s, @NonNull ConnectionInfo connectionInfo) {
                     System.out.println("Connection estbalsiehd.");
                     Toast.makeText(getBaseContext(), "Connection established", Toast.LENGTH_SHORT).show();
+                    connectionsClient.acceptConnection(s, payloadCallback);
+
                     try {
                         Payload payload = Payload.fromBytes(SerializationHelper.serialize(MainActivity.user.toString()));
                         connectionsClient.sendPayload(s, payload);
                         System.out.println("send: " + MainActivity.user.toString());
                     } catch (IOException e) {
                         e.printStackTrace();
-                    } finally {
-                        connectionsClient.acceptConnection(s, payloadCallback);
                     }
                 }
 
