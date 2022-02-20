@@ -89,6 +89,7 @@ public class ProximityService extends Service {
 
     public static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
     private static final Strategy STRATEGY = Strategy.P2P_CLUSTER;
+    private static final int MATCH_NOTIF_ID = 10;
 
     private ConnectionsClient connectionsClient;
     private NotificationManagerCompat notificationManager;
@@ -110,7 +111,6 @@ public class ProximityService extends Service {
                         byte[] receivedBytes = payload.asBytes();
                         try {
                             match = (User) SerializationHelper.deserialize(receivedBytes);
-
                         } catch (IOException e) {
                             e.printStackTrace();
                         } catch (ClassNotFoundException e) {
@@ -136,7 +136,6 @@ public class ProximityService extends Service {
                         e.printStackTrace();
                     }
                     connectionsClient.acceptConnection(s, payloadCallback);
-                    Toast.makeText(getBaseContext(), "Connection found", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -144,17 +143,20 @@ public class ProximityService extends Service {
                     //
                     if (result.getStatus().isSuccess()) {
                         // we don't want to stop discovery, we are p2pcluster so we want as many as possible
-                        connectionsClient.stopDiscovery();
-                        connectionsClient.stopAdvertising();
-                        Notification connectNotif = new Notification.Builder(getBaseContext(), SERVICE_CHAN_ID)
-                                .setContentTitle("Match found!")
-                                .setContentText("Click here to see more")
-                                .setSmallIcon(R.drawable.ic_notifications_black_24dp)
-                                .build();
-                        int notificationId = 10;
+//                        connectionsClient.stopDiscovery();
+//                        connectionsClient.stopAdvertising();
 
-                        notificationManager.notify(notificationId, connectNotif);
-                        Toast.makeText(getBaseContext(), "Match found!", Toast.LENGTH_SHORT).show();
+                        if (MainActivity.user.getProfile().IsMatch(match.getProfile())) {
+                            MainActivity.user.addMatch(match);
+                            Notification connectNotif = new Notification.Builder(getBaseContext(), SERVICE_CHAN_ID)
+                                    .setContentTitle("Match found!")
+                                    .setContentText("Click here to see more")
+                                    .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                                    .build();
+
+                            notificationManager.notify(MATCH_NOTIF_ID, connectNotif);
+                            Toast.makeText(getBaseContext(), "Match found!", Toast.LENGTH_SHORT).show();
+                        }
 
                         matchEndpointID = s;
                     }
@@ -207,14 +209,14 @@ public class ProximityService extends Service {
                 .setTicker(getText(R.string.ticker_text))
                 .build();
 
-        startForeground(1, notification);
-
         // initialize notification manager
         notificationManager = NotificationManagerCompat.from(this);
 
         // start nearby connections
         startDiscovery();
         startAdvertising();
+
+        startForeground(1, notification);
 
         // do work
 
@@ -232,8 +234,8 @@ public class ProximityService extends Service {
 
     @Override
     public void onDestroy() {
-        connectionsClient.stopAllEndpoints();
         disconnect();
+        connectionsClient.stopAllEndpoints();
         Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show();
     }
 

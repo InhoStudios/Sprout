@@ -1,7 +1,9 @@
 package com.joinsdn.sprout.model;
 
+import android.content.Context;
 import android.media.Image;
 import android.provider.MediaStore;
+import android.provider.Settings;
 
 import com.joinsdn.sprout.profile.Profile;
 
@@ -16,12 +18,14 @@ public class User {
 
     private Profile profile;
     private List<User> matches;
+    private String device_ID;
 
-    public User(String firstname, String lastname, String profilePicture, String bio) {
+    public User(String firstname, String lastname, String profilePicture, String bio, Context ctx) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.profilePicture = profilePicture;
         this.bio = bio;
+        this.device_ID = Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
     public String getFirstname() {
@@ -70,5 +74,10 @@ public class User {
 
     public void setMatches(List<User> matches) {
         this.matches = matches;
+    }
+
+    public void addMatch(User user) {
+        if (!this.matches.contains(user))
+            this.matches.add(user);
     }
 }
