@@ -16,8 +16,8 @@ public class User {
     private String profilePicture;
     private String bio;
 
-    private Profile profile;
-    private List<User> matches;
+    private transient Profile profile;
+    private transient List<User> matches;
     private String device_ID;
 
     public User(String firstname, String lastname, String profilePicture, String bio, Context ctx) {

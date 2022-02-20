@@ -135,7 +135,7 @@ public class ProximityService extends Service {
                     } catch (IOException e) {
                         e.printStackTrace();
                     } finally {
-                        Toast.makeText(getBaseContext(), "Connection established", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getBaseContext(), "Connection established", Toast.LENGTH_SHORT).show();
                         connectionsClient.acceptConnection(s, payloadCallback);
                     }
                 }
@@ -145,11 +145,11 @@ public class ProximityService extends Service {
                     //
                     if (result.getStatus().isSuccess()) {
                         // we don't want to stop discovery, we are p2pcluster so we want as many as possible
-//                        connectionsClient.stopDiscovery();
-//                        connectionsClient.stopAdvertising();
+                        connectionsClient.stopDiscovery();
+                        connectionsClient.stopAdvertising();
 
                         //if (MainActivity.user.getProfile().IsMatch(match.getProfile())) {
-                        MainActivity.user.addMatch(match);
+                        // MainActivity.user.addMatch(match);
                         String name = match.getFirstname();
                         Notification connectNotif = new Notification.Builder(getBaseContext(), SERVICE_CHAN_ID)
                                 .setContentTitle("Match found!")
@@ -158,8 +158,8 @@ public class ProximityService extends Service {
                                 .build();
 
                         notificationManager.notify(MATCH_NOTIF_ID, connectNotif);
-                        Toast.makeText(getBaseContext(), "Match found!", Toast.LENGTH_SHORT).show();
                         //}
+                        Toast.makeText(getBaseContext(), "Match found!", Toast.LENGTH_SHORT).show();
 
                         matchEndpointID = s;
                     }
@@ -176,7 +176,7 @@ public class ProximityService extends Service {
                 @Override
                 public void onEndpointFound(@NonNull String s, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
                     connectionsClient.requestConnection(codeName, s, connectionLifecycleCallback);
-                    Toast.makeText(getBaseContext(), "Endpoint found", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getBaseContext(), "Endpoint found", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
