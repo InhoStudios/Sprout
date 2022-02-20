@@ -44,7 +44,10 @@ import com.google.android.gms.nearby.connection.Strategy;
 import com.joinsdn.sprout.MainActivity;
 import com.joinsdn.sprout.R;
 import com.joinsdn.sprout.model.User;
+import com.joinsdn.sprout.util.SerializationHelper;
 import com.joinsdn.sprout.util.TokenGenerator;
+
+import java.io.IOException;
 
 public class ProximityService extends Service {
     public static final String SERVICE_CHAN_ID = "ProximityServiceChannel";
@@ -103,9 +106,17 @@ public class ProximityService extends Service {
             new PayloadCallback() {
                 @Override
                 public void onPayloadReceived(@NonNull String s, @NonNull Payload payload) {
-                    // decipher profile
-                    // check profile compatibility
-                    // determine if match or not
+                    if (payload.getType() == Payload.Type.BYTES) {
+                        byte[] receivedBytes = payload.asBytes();
+                        try {
+                            match = (User) SerializationHelper.deserialize(receivedBytes);
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
 
                 @Override
@@ -118,6 +129,12 @@ public class ProximityService extends Service {
             new ConnectionLifecycleCallback() {
                 @Override
                 public void onConnectionInitiated(@NonNull String s, @NonNull ConnectionInfo connectionInfo) {
+                    try {
+                        Payload payload = Payload.fromBytes(SerializationHelper.serialize(MainActivity.user));
+                        connectionsClient.sendPayload(s, payload);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     connectionsClient.acceptConnection(s, payloadCallback);
                     Toast.makeText(getBaseContext(), "Connection found", Toast.LENGTH_SHORT).show();
                 }
@@ -145,7 +162,7 @@ public class ProximityService extends Service {
 
                 @Override
                 public void onDisconnected(@NonNull String s) {
-                    // handle disconnect
+                    disconnect();
                 }
             };
 
