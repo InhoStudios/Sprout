@@ -244,3 +244,4 @@ public class ProximityService extends Service {
     }
 
 }
+

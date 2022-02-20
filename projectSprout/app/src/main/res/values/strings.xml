@@ -2,10 +2,14 @@
     <string name="app_name">Sprout</string>
     <string name="title_nearby">Nearby</string>
     <string name="title_dashboard">Dashboard</string>
-    <string name="title_settings">Settings</string>
+    <string name="title_notifications">Notifications</string>
 
     <string name="proxy_noti_title">Sprout</string>
     <string name="proxy_noti_msg">Sprout is running in the background</string>
     <string name="ticker_text">ticker text</string>
+
+    <string name="nearby">Nearby</string>
+    <string name="profile">Profile</string>
+    <string name="stats">Statistics</string>
 
 </resources>
