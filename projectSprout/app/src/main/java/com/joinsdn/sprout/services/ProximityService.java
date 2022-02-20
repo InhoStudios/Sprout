@@ -19,6 +19,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -93,6 +94,8 @@ public class ProximityService extends Service {
     private String matchEndpointID;
     private User match;
 
+    private TextView tempView;
+
     // call backs
     // PayloadCallback, EndpointDiscoveryCallback, ConnectionLifeCycleCallback
     // TODO: Fill Callback Objects
@@ -116,6 +119,7 @@ public class ProximityService extends Service {
                 @Override
                 public void onConnectionInitiated(@NonNull String s, @NonNull ConnectionInfo connectionInfo) {
                     connectionsClient.acceptConnection(s, payloadCallback);
+                    Toast.makeText(getBaseContext(), "Connection found", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -123,15 +127,17 @@ public class ProximityService extends Service {
                     //
                     if (result.getStatus().isSuccess()) {
                         // we don't want to stop discovery, we are p2pcluster so we want as many as possible
-//                        connectionsClient.stopDiscovery();
-//                        connectionsClient.stopAdvertising();
+                        connectionsClient.stopDiscovery();
+                        connectionsClient.stopAdvertising();
                         Notification connectNotif = new Notification.Builder(getBaseContext(), SERVICE_CHAN_ID)
                                 .setContentTitle("Match found!")
                                 .setContentText("Click here to see more")
+                                .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                                 .build();
                         int notificationId = 10;
 
                         notificationManager.notify(notificationId, connectNotif);
+                        Toast.makeText(getBaseContext(), "Match found!", Toast.LENGTH_SHORT).show();
 
                         matchEndpointID = s;
                     }
@@ -148,6 +154,7 @@ public class ProximityService extends Service {
                 @Override
                 public void onEndpointFound(@NonNull String s, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
                     connectionsClient.requestConnection(codeName, s, connectionLifecycleCallback);
+                    // Toast.makeText(getBaseContext(), "Endpoint found", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -209,6 +216,7 @@ public class ProximityService extends Service {
     @Override
     public void onDestroy() {
         connectionsClient.stopAllEndpoints();
+        disconnect();
         Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show();
     }
 
