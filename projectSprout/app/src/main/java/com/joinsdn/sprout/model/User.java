@@ -5,6 +5,7 @@ import android.provider.MediaStore;
 
 import com.joinsdn.sprout.profile.Profile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class User {
@@ -64,7 +65,7 @@ public class User {
     }
 
     public List<User> getMatches() {
-        return matches;
+        return this.matches;
     }
 
     public void setMatches(List<User> matches) {
