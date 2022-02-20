@@ -47,6 +47,8 @@ import com.joinsdn.sprout.model.User;
 import com.joinsdn.sprout.util.SerializationHelper;
 import com.joinsdn.sprout.util.TokenGenerator;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 
 public class ProximityService extends Service {
@@ -107,50 +109,26 @@ public class ProximityService extends Service {
             new PayloadCallback() {
                 @Override
                 public void onPayloadReceived(@NonNull String s, @NonNull Payload payload) {
-                    if (payload.getType() == Payload.Type.BYTES) {
+                    System.out.println("I got a singal pro");
+//                    if (payload.getType() == Payload.Type.BYTES) {
                         byte[] receivedBytes = payload.asBytes();
                         try {
-                            match = (User) SerializationHelper.deserialize(receivedBytes);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (ClassNotFoundException e) {
-                            e.printStackTrace();
+                            String matchString = (String) SerializationHelper.deserialize(receivedBytes);
+                            System.out.println("receive: " +matchString);
+                            match = User.fromJson(matchString);
+                        } catch(Exception e){
+                            System.out.println("i get error bro");
                         }
-                    }
+//                    }
                 }
 
                 @Override
                 public void onPayloadTransferUpdate(@NonNull String s, @NonNull PayloadTransferUpdate payloadTransferUpdate) {
-                    // i do not know what this method means
-                }
-            };
-
-    private ConnectionLifecycleCallback connectionLifecycleCallback =
-            new ConnectionLifecycleCallback() {
-                @Override
-                public void onConnectionInitiated(@NonNull String s, @NonNull ConnectionInfo connectionInfo) {
-                    try {
-                        Payload payload = Payload.fromBytes(SerializationHelper.serialize(MainActivity.user));
-                        connectionsClient.sendPayload(s, payload);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-//                        Toast.makeText(getBaseContext(), "Connection established", Toast.LENGTH_SHORT).show();
-                        connectionsClient.acceptConnection(s, payloadCallback);
-                    }
-                }
-
-                @Override
-                public void onConnectionResult(@NonNull String s, @NonNull ConnectionResolution result) {
-                    //
-                    if (result.getStatus().isSuccess()) {
-                        // we don't want to stop discovery, we are p2pcluster so we want as many as possible
-                        connectionsClient.stopDiscovery();
-                        connectionsClient.stopAdvertising();
-
-                        //if (MainActivity.user.getProfile().IsMatch(match.getProfile())) {
-                        // MainActivity.user.addMatch(match);
-                        String name = match.getFirstname();
+                    if (payloadTransferUpdate.getStatus() == PayloadTransferUpdate.Status.SUCCESS) {
+                        String name = "no name";
+                        if (match != null) {
+                            name = match.getFirstname();
+                        }
                         Notification connectNotif = new Notification.Builder(getBaseContext(), SERVICE_CHAN_ID)
                                 .setContentTitle("Match found!")
                                 .setContentText("You matched with " + name)
@@ -158,10 +136,41 @@ public class ProximityService extends Service {
                                 .build();
 
                         notificationManager.notify(MATCH_NOTIF_ID, connectNotif);
-                        //}
+
                         Toast.makeText(getBaseContext(), "Match found!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            };
+
+    private ConnectionLifecycleCallback connectionLifecycleCallback =
+            new ConnectionLifecycleCallback() {
+                @Override
+                public void onConnectionInitiated(@NonNull String s, @NonNull ConnectionInfo connectionInfo) {
+                    System.out.println("Connection estbalsiehd.");
+                    Toast.makeText(getBaseContext(), "Connection established", Toast.LENGTH_SHORT).show();
+                    try {
+                        Payload payload = Payload.fromBytes(SerializationHelper.serialize(MainActivity.user.toString()));
+                        connectionsClient.sendPayload(s, payload);
+                        System.out.println("send: " + MainActivity.user.toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        connectionsClient.acceptConnection(s, payloadCallback);
+                    }
+                }
+
+                @Override
+                public void onConnectionResult(@NonNull String s, @NonNull ConnectionResolution result) {
+
+                    if (result.getStatus().isSuccess()) {
+                        System.out.println("Connection finished succ.");
+                        // we don't want to stop discovery, we are p2pcluster so we want as many as possible
+                        connectionsClient.stopDiscovery();
+                        connectionsClient.stopAdvertising();
 
                         matchEndpointID = s;
+                    }else{
+                        System.out.println("Connection finished failed.");
                     }
                 }
 

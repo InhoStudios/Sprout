@@ -34,7 +34,7 @@ public class User {
         this.lastname = lastname;
         this.profilePicture = profilePicture;
         this.bio = bio;
-        this.device_ID = Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.ANDROID_ID);
+        // this.device_ID = Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
     public String getFirstname() {
