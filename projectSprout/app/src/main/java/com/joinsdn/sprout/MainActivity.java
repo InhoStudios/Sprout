@@ -23,11 +23,14 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.elevation.SurfaceColors;
 import com.joinsdn.sprout.databinding.ActivityMainBinding;
+import com.joinsdn.sprout.model.User;
 import com.joinsdn.sprout.services.ProximityService;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+
+    public static User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
